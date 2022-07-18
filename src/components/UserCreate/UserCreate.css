@@ -1,0 +1,17 @@
+
+.avatar-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.avatar-list .create-avatar {
+  transition: ease-in-out 0.1s;
+  opacity: 0.8;
+}
+
+.avatar-list .create-avatar:hover {
+  opacity: 1;
+  cursor: pointer;
+}
