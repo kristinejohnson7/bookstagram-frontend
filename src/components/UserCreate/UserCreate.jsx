@@ -1,12 +1,12 @@
 import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./UserCreate.css";
 import { UserContext } from "../../App";
 import Alert from "../Alert/Alert";
 import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
 
-const UserCreate = () => {
+const UserCreate = ({ closeRegister }) => {
   const { authService } = useContext(UserContext);
   const INIT_STATE = {
     userName: "",
@@ -21,6 +21,12 @@ const UserCreate = () => {
     setUserInfo({ ...userInfo, [name]: value });
   };
 
+  let navigate = useNavigate();
+  const routeChange = (path) => {
+    let pathName = `${path}`;
+    navigate(pathName);
+  };
+
   const createUser = (e) => {
     e.preventDefault();
     const { userName, email, password } = userInfo;
@@ -33,6 +39,7 @@ const UserCreate = () => {
             .loginUser(email, password)
             .then(() => {
               setUserInfo(INIT_STATE);
+              routeChange("/feed");
               console.log("user info updated", userInfo);
             })
             .catch((error) => {
@@ -82,9 +89,10 @@ const UserCreate = () => {
           <FormBody onChange={onChange} formValues={userCreateValues} />
           <Button cname="submitBtn" title="Create Account" />
         </form>
-        <div className="footer-text">
-          Already have an Account? Login <Link to="/login">HERE</Link>
-        </div>
+        {/* <div className="footer-text">
+          Already have an Account? Login{" "}
+          <button onClick={() => closeRegister(true)}>HERE</button>
+        </div> */}
       </div>
     </>
   );

@@ -13,7 +13,7 @@ const URL_USER = `${BASE_URL}/users/`;
 // const URL_GET_CHANNELS = `${BASE_URL}/channel/`;
 
 // const URL_GET_MESSAGES = `${BASE_URL}/message/byChannel/`;
-// const URL_GET_MSG = `${BASE_URL}/message/`;
+const URL_GET_POSTS = `${BASE_URL}/posts/`;
 
 const headers = { "Content-Type": "application/json" };
 
@@ -23,6 +23,7 @@ class User {
     this.name = "";
     this.email = "";
     this.isLoggedIn = false;
+    console.log(this.id, "constructor");
   }
 
   setUserEmail(email) {
@@ -37,6 +38,7 @@ class User {
     this.id = _id;
     this.name = name;
     this.email = email;
+    console.log("setting id", this.id);
   }
 }
 
@@ -54,6 +56,7 @@ export class AuthService extends User {
     this.isLoggedIn = false;
     this.authToken = "";
     this.bearerHeader = {};
+    console.log("logged out", this.isLoggedIn);
   }
 
   setAuthToken(token) {
@@ -62,21 +65,11 @@ export class AuthService extends User {
   setBearerHeader(token) {
     this.bearerHeader = {
       "Content-Type": "application/json",
-      Authorization: `bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     };
   }
 
   getBearerHeader = () => this.bearerHeader;
-
-  // async registerUser(email, password) {
-  //   const body = { email: email.toLowerCase(), password: password };
-  //   try {
-  //     await axios.post(URL_REGISTER, body);
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
 
   async createUser(name, email, password) {
     const headers = this.getBearerHeader();
@@ -100,7 +93,11 @@ export class AuthService extends User {
       const response = await axios.post(URL_LOGIN, body, { headers });
       this.setAuthToken(response.data.token);
       this.setBearerHeader(response.data.token);
-      this.setUserEmail(response.data.email);
+      this.setUserData({
+        name: response.data.data.name,
+        email: response.data.data.email,
+        _id: response.data.data._id,
+      });
       this.setIsLoggedIn(true);
       await this.getLoggedInUser();
     } catch (error) {
@@ -113,8 +110,6 @@ export class AuthService extends User {
     const headers = this.getBearerHeader();
     try {
       const response = await axios.get(URL_ACCOUNT, { headers });
-      console.log("response", response);
-      this.setUserData(response.data);
     } catch (err) {
       console.error(err);
     }
@@ -134,10 +129,14 @@ export class AuthService extends User {
 
   async deleteUser() {
     const headers = this.getBearerHeader();
+    const userId = this.id;
+    console.log(userId);
+
     try {
       return await axios.delete(URL_USER + this.id, { headers });
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 
@@ -155,5 +154,230 @@ export class AuthService extends User {
       console.error(error);
       throw error;
     }
+  }
+}
+
+export class PostService {
+  constructor(authHeader) {
+    this.getAuthHeader = authHeader;
+    // this.selectedChannel = {};
+    // this.channels = [];
+    // this.unreadChannels = [];
+    this.posts = [];
+  }
+
+  // addChannel = (channel) => this.channels.push(channel);
+  addPost = (post) => this.posts.push(post);
+  // setSelectedChannel = (channel) => (this.selectedChannel = channel);
+  // getSelectedChannel = () => this.selectedChannel;
+  // getAllChannels = () => this.channels;
+
+  // addToUnread = (urc) => this.unreadChannels.push(urc);
+
+  // setUnreadChannels = (channel) => {
+  //   if (this.unreadChannels.includes(channel.id)) {
+  //     this.unreadChannels = this.unreadChannels.filter(
+  //       (ch) => ch !== channel.id
+  //     );
+  //   }
+  //   return this.unreadChannels;
+  // };
+
+  // async findAllChannels() {
+  //   const headers = this.getAuthHeader();
+  //   try {
+  //     let response = await axios.get(URL_GET_CHANNELS, { headers });
+  //     response = response.data.map((channel) => ({
+  //       name: channel.name,
+  //       description: channel.description,
+  //       id: channel._id,
+  //     }));
+  //     this.channels = [...response];
+  //     return response;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // }
+
+  // async findAllMessagesForChannel(channelId) {
+  //   const headers = this.getAuthHeader();
+  //   try {
+  //     let response = await axios.get(URL_GET_MESSAGES + channelId, { headers });
+  //     response = response.data.map((msg) => ({
+  //       userId: msg.userId,
+  //       messageBody: msg.messageBody,
+  //       channelId: msg.channelId,
+  //       id: msg._id,
+  //       userName: msg.userName,
+  //       userAvatar: msg.userAvatar,
+  //       userAvatarColor: msg.userAvatarColor,
+  //       timeStamp: msg.timeStamp,
+  //     }));
+  //     this.messages = response;
+  //     return response;
+  //   } catch (error) {
+  //     console.error(error);
+  //     this.messages = [];
+  //     throw error;
+  //   }
+  // }
+
+  // async deleteChannel(id) {
+  //   const headers = this.getAuthHeader();
+  //   try {
+  //     const response = await axios.delete(URL_GET_CHANNELS + id, { headers });
+  //     this.channels = response;
+  //     console.log("this.channels", this.channels);
+  //     return this.channels;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   } finally {
+  //     this.messages.filter((message) => {
+  //       if (message.channelId === id) {
+  //         this.deleteMessage(message.id);
+  //       }
+  //     });
+  //   }
+  // }
+
+  async findAllPosts() {
+    try {
+      const response = await axios.get(URL_GET_POSTS);
+      // this.posts.push(response.data.data);
+      console.log("await", response.data.data);
+      return response.data.data;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  // async findUserOfPost(id) {
+  //   try {
+  //     const response = await axios.get(URL_USER + "62d21a7926712d35824f33ad");
+  //     console.log("response", response.data.data.name);
+  //   } catch (err) {
+  //     console.error(err);
+  //     throw err;
+  //   }
+  // }
+
+  async deletePost(id) {
+    const headers = this.getAuthHeader();
+    try {
+      const response = await axios.delete(URL_GET_POSTS + id, { headers });
+      this.posts = this.posts.filter((post) => post !== response);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async updateMessage(id, body) {
+    const headers = this.getAuthHeader();
+    try {
+      const response = await axios.put(URL_GET_POSTS + id, body, { headers });
+      console.log("response", response);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+}
+
+export class SocketService {
+  socket = io("http://localhost:3005/");
+  constructor(chatService) {
+    this.chatService = chatService;
+  }
+
+  establishConnection() {
+    console.log("client connect");
+    this.socket.connect();
+  }
+
+  closeConnection() {
+    console.log("client disconnect");
+    this.socket.disconnect();
+  }
+
+  addChannel(name, description) {
+    this.socket.emit("newChannel", name, description);
+  }
+
+  getChannel(cb) {
+    this.socket.on("channelCreated", (name, description, id) => {
+      const channel = { name, description, id };
+      this.chatService.addChannel(channel);
+      const channelList = this.chatService.getAllChannels();
+      cb(channelList);
+    });
+  }
+
+  addMessage(messageBody, channelId, user) {
+    const { userName, userId, userAvatar, userAvatarColor } = user;
+    if (!!messageBody && !!channelId && !!user) {
+      this.socket.emit(
+        "newMessage",
+        messageBody,
+        userId,
+        channelId,
+        userName,
+        userAvatar,
+        userAvatarColor
+      );
+    }
+  }
+
+  getChatMessage(cb) {
+    this.socket.on(
+      "messageCreated",
+      (
+        messageBody,
+        userId,
+        channelId,
+        userName,
+        userAvatar,
+        userAvatarColor,
+        id,
+        timeStamp
+      ) => {
+        const channel = this.chatService.getSelectedChannel();
+        const chat = {
+          messageBody,
+          userId,
+          channelId,
+          userName,
+          userAvatar,
+          userAvatarColor,
+          id,
+          timeStamp,
+        };
+        if (
+          channelId !== channel.id &&
+          !this.chatService.unreadChannels.includes(channelId)
+        ) {
+          this.chatService.addToUnread(channelId);
+        }
+        this.chatService.messages = [...this.chatService.messages, chat];
+        cb(chat, this.chatService.messages);
+      }
+    );
+  }
+
+  startTyping(userName, channelId) {
+    this.socket.emit("startType", userName, channelId);
+  }
+
+  stopTyping(userName) {
+    this.socket.emit("startType", userName);
+  }
+
+  getUserTyping(cb) {
+    this.socket.on("userTypingUpdate", (typingUsers) => {
+      cb(typingUsers);
+    });
   }
 }
