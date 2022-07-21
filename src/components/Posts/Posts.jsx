@@ -20,14 +20,14 @@ export default function Posts() {
       <div>POSTS FORUM</div>
       {!!posts.length ? (
         posts.map((post) => {
-          const { _id, createdAt, description, photo, title } = post;
+          const { _id, createdAt, description, photo, title, userName } = post;
           return (
             <div className="postContainer" key={_id}>
               <h2>{title}</h2>
+              <p>{userName}</p>
               <p>{createdAt}</p>
               <p>{description}</p>
               <img src={photo} alt="post" />
-              {/* {!!userName ? <div></div> : <div>user info not available</div>} */}
             </div>
           );
         })

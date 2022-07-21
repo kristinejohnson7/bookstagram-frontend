@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { UserContext } from "../../App";
 import Alert from "../Alert/Alert";
 import logo from "../../assets/logo.png";
@@ -19,18 +19,21 @@ const UserLogin = () => {
   };
 
   let navigate = useNavigate();
-  const routeChange = (path) => {
-    let pathName = `${path}`;
-    navigate(pathName);
-  };
+  let location = useLocation();
+  // const routeChange = (path) => {
+  //   let pathName = `${path}`;
+  //   navigate(pathName);
+  // };
 
   const onLoginUser = (e) => {
     e.preventDefault();
     const { email, password } = userLogins;
     if (!!email && !!password) {
+      let from = location.state?.from.pathname || "/feed";
+      console.log(location, "location", from);
       authService
         .loginUser(email, password)
-        .then(routeChange("/feed"))
+        .then(navigate(from, { replace: true }))
         .catch(() => {
           setError(true);
           setUserLogins({ email: "", password: "" });

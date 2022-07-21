@@ -38,7 +38,6 @@ class User {
     this.id = _id;
     this.name = name;
     this.email = email;
-    console.log("setting id", this.id);
   }
 }
 
@@ -56,7 +55,6 @@ export class AuthService extends User {
     this.isLoggedIn = false;
     this.authToken = "";
     this.bearerHeader = {};
-    console.log("logged out", this.isLoggedIn);
   }
 
   setAuthToken(token) {
@@ -93,13 +91,9 @@ export class AuthService extends User {
       const response = await axios.post(URL_LOGIN, body, { headers });
       this.setAuthToken(response.data.token);
       this.setBearerHeader(response.data.token);
-      this.setUserData({
-        name: response.data.data.name,
-        email: response.data.data.email,
-        _id: response.data.data._id,
-      });
       this.setIsLoggedIn(true);
       await this.getLoggedInUser();
+      console.log("logged in BOL", this.isLoggedIn);
     } catch (error) {
       console.error(error);
       throw error;
@@ -110,8 +104,16 @@ export class AuthService extends User {
     const headers = this.getBearerHeader();
     try {
       const response = await axios.get(URL_ACCOUNT, { headers });
+      console.log("logged in user", response.data);
+
+      this.setUserData({
+        name: response.data.data.name,
+        email: response.data.data.email,
+        _id: response.data.data._id,
+      });
     } catch (err) {
       console.error(err);
+      throw err;
     }
   }
 
@@ -130,7 +132,7 @@ export class AuthService extends User {
   async deleteUser() {
     const headers = this.getBearerHeader();
     const userId = this.id;
-    console.log(userId);
+    console.log(this);
 
     try {
       return await axios.delete(URL_USER + this.id, { headers });
@@ -160,93 +162,17 @@ export class AuthService extends User {
 export class PostService {
   constructor(authHeader) {
     this.getAuthHeader = authHeader;
-    // this.selectedChannel = {};
-    // this.channels = [];
-    // this.unreadChannels = [];
     this.posts = [];
   }
 
-  // addChannel = (channel) => this.channels.push(channel);
   addPost = (post) => this.posts.push(post);
-  // setSelectedChannel = (channel) => (this.selectedChannel = channel);
-  // getSelectedChannel = () => this.selectedChannel;
-  // getAllChannels = () => this.channels;
-
-  // addToUnread = (urc) => this.unreadChannels.push(urc);
-
-  // setUnreadChannels = (channel) => {
-  //   if (this.unreadChannels.includes(channel.id)) {
-  //     this.unreadChannels = this.unreadChannels.filter(
-  //       (ch) => ch !== channel.id
-  //     );
-  //   }
-  //   return this.unreadChannels;
-  // };
-
-  // async findAllChannels() {
-  //   const headers = this.getAuthHeader();
-  //   try {
-  //     let response = await axios.get(URL_GET_CHANNELS, { headers });
-  //     response = response.data.map((channel) => ({
-  //       name: channel.name,
-  //       description: channel.description,
-  //       id: channel._id,
-  //     }));
-  //     this.channels = [...response];
-  //     return response;
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   }
-  // }
-
-  // async findAllMessagesForChannel(channelId) {
-  //   const headers = this.getAuthHeader();
-  //   try {
-  //     let response = await axios.get(URL_GET_MESSAGES + channelId, { headers });
-  //     response = response.data.map((msg) => ({
-  //       userId: msg.userId,
-  //       messageBody: msg.messageBody,
-  //       channelId: msg.channelId,
-  //       id: msg._id,
-  //       userName: msg.userName,
-  //       userAvatar: msg.userAvatar,
-  //       userAvatarColor: msg.userAvatarColor,
-  //       timeStamp: msg.timeStamp,
-  //     }));
-  //     this.messages = response;
-  //     return response;
-  //   } catch (error) {
-  //     console.error(error);
-  //     this.messages = [];
-  //     throw error;
-  //   }
-  // }
-
-  // async deleteChannel(id) {
-  //   const headers = this.getAuthHeader();
-  //   try {
-  //     const response = await axios.delete(URL_GET_CHANNELS + id, { headers });
-  //     this.channels = response;
-  //     console.log("this.channels", this.channels);
-  //     return this.channels;
-  //   } catch (error) {
-  //     console.error(error);
-  //     throw error;
-  //   } finally {
-  //     this.messages.filter((message) => {
-  //       if (message.channelId === id) {
-  //         this.deleteMessage(message.id);
-  //       }
-  //     });
-  //   }
-  // }
 
   async findAllPosts() {
     try {
       const response = await axios.get(URL_GET_POSTS);
       // this.posts.push(response.data.data);
-      console.log("await", response.data.data);
+      this.posts = response.data.data;
+      console.log("posts", this.posts);
       return response.data.data;
     } catch (err) {
       console.error(err);
@@ -254,15 +180,19 @@ export class PostService {
     }
   }
 
-  // async findUserOfPost(id) {
-  //   try {
-  //     const response = await axios.get(URL_USER + "62d21a7926712d35824f33ad");
-  //     console.log("response", response.data.data.name);
-  //   } catch (err) {
-  //     console.error(err);
-  //     throw err;
-  //   }
-  // }
+  async createPost(photo, title, description) {
+    const headers = this.getAuthHeader();
+    try {
+      const body = {
+        photo: photo,
+        description: description,
+        title: title,
+      };
+      const response = await axios.post(URL_GET_POSTS, body, { headers });
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   async deletePost(id) {
     const headers = this.getAuthHeader();

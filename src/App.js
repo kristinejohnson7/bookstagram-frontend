@@ -35,14 +35,25 @@ const AuthProvider = ({ children }) => {
   );
 };
 
+// const PrivateRoute = ({ children, ...props }) => {
+//   const context = useContext(UserContext);
+//   const location = useLocation();
+
+//   if (!context.authService.isLoggedIn) {
+//     return (
+//       <Navigate {...props} to="/login" state={{ from: location }} replace />
+//     );
+//   }
+
+//   return children;
+// };
+
 const PrivateRoute = ({ children, ...props }) => {
   const context = useContext(UserContext);
   const location = useLocation();
 
   if (!context.authService.isLoggedIn) {
-    return (
-      <Navigate {...props} to="/login" state={{ from: location }} replace />
-    );
+    return <Navigate {...props} to="/" state={{ from: location }} replace />;
   }
 
   return children;
@@ -53,10 +64,17 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* <Route path="/" element={<Hero />} /> */}
           <Route path="/" element={<UserLogin />} exact />
           <Route path="/register" element={<UserCreate />} exact />
-          <Route path="/feed" element={<MainFeed />} exact />
+
+          <Route
+            path="/feed"
+            element={
+              // <PrivateRoute>
+              <MainFeed />
+              /* </PrivateRoute> */
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>

@@ -4,6 +4,7 @@ import Posts from "../Posts/Posts";
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
+import UploadPost from "../UploadPost/UploadPost";
 
 export default function MainFeed() {
   const { authService, socketService, postService } = useContext(UserContext);
@@ -17,13 +18,12 @@ export default function MainFeed() {
   const [updateProfile, setUpdateProfile] = useState(false);
   const [userInfo, setUserInfo] = useState(CURRENT_PROFILE);
   const [error, setError] = useState(false);
+  const [uploadModal, setUploadModal] = useState(false);
 
   useEffect(() => {
     socketService.establishConnection();
     return () => socketService.closeConnection();
   }, []);
-
-  const createPost = () => {};
 
   const handleUpdateProfile = () => {
     setUpdateProfile(true);
@@ -32,7 +32,7 @@ export default function MainFeed() {
   const logoutUser = () => {
     setModal(false);
     //fixed memory leak from router not releasing socket io emitters
-    window.location = "/login";
+    window.location = "/";
   };
 
   const deleteUser = () => {
@@ -40,7 +40,7 @@ export default function MainFeed() {
       "Are you sure you want to delete your account? This action cannot be undone."
     );
     if (result) {
-      authService.logoutUser();
+      // authService.logoutUser();
       authService
         .deleteUser()
         .then(() => logoutUser())
@@ -132,7 +132,10 @@ export default function MainFeed() {
         )}
       </Modal>
       <Posts />
-      <button onClick={createPost}>Create Post</button>
+      <button onClick={() => setUploadModal(true)}>Create Post</button>
+      {uploadModal && (
+        <UploadPost close={() => setUploadModal(false)} modal="true" />
+      )}
     </div>
   );
 }
