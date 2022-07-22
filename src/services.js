@@ -62,7 +62,7 @@ export class AuthService extends User {
   }
   setBearerHeader(token) {
     this.bearerHeader = {
-      "Content-Type": "application/json",
+      // "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     };
   }
@@ -163,6 +163,12 @@ export class PostService {
   constructor(authHeader) {
     this.getAuthHeader = authHeader;
     this.posts = [];
+    this.s3Url = "";
+    this.s3Key = "";
+  }
+
+  setPosts(newPosts) {
+    this.posts = newPosts;
   }
 
   addPost = (post) => this.posts.push(post);
@@ -180,15 +186,53 @@ export class PostService {
     }
   }
 
-  async createPost(photo, title, description) {
+  // async getS3Url() {
+  //   try {
+  //     const url = await axios.get();
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
+
+  // async getS3Url(headers) {
+  //   try {
+  //     const response = await axios
+  //       .get(`${BASE_URL}/s3Url`, { headers })
+  //       .then((res) => res.json());
+  //     this.setS3Url(response.data.url);
+  //     this.setS3Key(response.data.key);
+  //   } catch (err) {
+  //     console.error(err);
+  //     throw err;
+  //   }
+  // }
+
+  // async createPost(body) {
+  //   const headers = this.getAuthHeader();
+  //   console.log("headers", headers);
+  //   try {
+  //     // const body = {
+  //     //   photo: photo,
+  //     //   description: description,
+  //     //   title: title,
+  //     // };
+  //     const response = await axios.post(URL_GET_POSTS, body, { headers });
+  //     console.log("response", response);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
+
+  async createPost(image, description, title) {
     const headers = this.getAuthHeader();
     try {
       const body = {
-        photo: photo,
+        image: image,
         description: description,
         title: title,
       };
       const response = await axios.post(URL_GET_POSTS, body, { headers });
+      console.log("response", response);
     } catch (err) {
       console.error(err);
     }

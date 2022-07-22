@@ -33,7 +33,7 @@ const UserLogin = () => {
       console.log(location, "location", from);
       authService
         .loginUser(email, password)
-        .then(navigate(from, { replace: true }))
+        .then(() => navigate(from, { replace: true }))
         .catch(() => {
           setError(true);
           setUserLogins({ email: "", password: "" });

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import "./UserCreate.css";
 import { UserContext } from "../../App";
 import Alert from "../Alert/Alert";
@@ -21,17 +21,22 @@ const UserCreate = ({ closeRegister }) => {
     setUserInfo({ ...userInfo, [name]: value });
   };
 
+  // let navigate = useNavigate();
+  // const routeChange = (path) => {
+  //   let pathName = `${path}`;
+  //   navigate(pathName);
+  // };
+
   let navigate = useNavigate();
-  const routeChange = (path) => {
-    let pathName = `${path}`;
-    navigate(pathName);
-  };
+  let location = useLocation();
 
   const createUser = (e) => {
     e.preventDefault();
     const { userName, email, password } = userInfo;
     if (!!userName && !!email && !!password) {
       setIsLoading(true);
+      let from = location.state?.from.pathname || "/feed";
+
       authService
         .createUser(userName, email, password)
         .then(() => {
@@ -39,7 +44,7 @@ const UserCreate = ({ closeRegister }) => {
             .loginUser(email, password)
             .then(() => {
               setUserInfo(INIT_STATE);
-              routeChange("/feed");
+              navigate(from, { replace: true });
               console.log("user info updated", userInfo);
             })
             .catch((error) => {
