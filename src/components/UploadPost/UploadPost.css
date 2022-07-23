@@ -1,0 +1,31 @@
+.uploadPostForm {
+  margin: 0 auto;
+  width: 90%;
+  display: flex;
+  gap: 29px;
+  justify-content: space-between;
+}
+
+.uploadPostForm input {
+  width: 100%;
+  margin: 15px auto;
+}
+
+.dragPhotoContainer {
+  border: 1px solid #DACDC3;
+  border-radius: 7px;
+  padding: 20px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.imagePreview {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.uploadInputs {
+  width: 100%;
+  margin: auto;
+}
+

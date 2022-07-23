@@ -5,6 +5,8 @@ import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
 import UploadPost from "../UploadPost/UploadPost";
+import "./MainFeed.css";
+import Nav from "../Nav/Nav";
 
 export default function MainFeed() {
   const { authService, socketService, postService } = useContext(UserContext);
@@ -20,10 +22,10 @@ export default function MainFeed() {
   const [error, setError] = useState(false);
   const [uploadModal, setUploadModal] = useState(false);
 
-  useEffect(() => {
-    socketService.establishConnection();
-    return () => socketService.closeConnection();
-  }, []);
+  // useEffect(() => {
+  //   socketService.establishConnection();
+  //   return () => socketService.closeConnection();
+  // }, []);
 
   const handleUpdateProfile = () => {
     setUpdateProfile(true);
@@ -94,48 +96,59 @@ export default function MainFeed() {
   };
 
   return (
-    <div>
-      Main
-      <button onClick={() => setModal(true)}>Profile</button>
-      <Modal title="Profile" isOpen={modal} close={() => setModal(false)}>
-        {!updateProfile && (
-          <>
-            <div className="profile">
-              <h4>Username: </h4>
-              <h4>Email: </h4>
+    <>
+      <Nav
+        profileModal={() => setModal(true)}
+        uploadModal={() => setUploadModal(true)}
+      />
+      <div className="mainFeedPosts">
+        <Modal isOpen={modal} close={() => setModal(false)}>
+          {!updateProfile && (
+            <>
+              <h3>Profile:</h3>
+              <div className="profile">
+                <h4>
+                  USERNAME: <span>{CURRENT_PROFILE.name}</span>
+                </h4>
+                <h4>
+                  EMAIL: <span>{CURRENT_PROFILE.email}</span>{" "}
+                </h4>
+              </div>
+              <Button
+                handleOnClick={handleUpdateProfile}
+                title="Edit Profile"
+                cname="profileBtn"
+              />
+              <Button
+                handleOnClick={logoutUser}
+                title="Logout"
+                cname="logoutBtn"
+              />
+              <Button
+                handleOnClick={deleteUser}
+                title="Delete User"
+                cname="deleteBtn"
+              />
+            </>
+          )}
+          {updateProfile && (
+            <div>
+              <h3>Create new post:</h3>
+              <form onSubmit={onProfileUpdate} className="form">
+                <FormBody formValues={editProfile} />
+                <Button title="Save Changes" cname="submitBtn" />
+                {error && <div>Error updating profile, please try again.</div>}
+              </form>
             </div>
-            <Button
-              handleOnClick={handleUpdateProfile}
-              title="Edit Profile"
-              cname="profileBtn"
-            />
-            <Button
-              handleOnClick={logoutUser}
-              title="Logout"
-              cname="logoutBtn"
-            />
-            <Button
-              handleOnClick={deleteUser}
-              title="Delete User"
-              cname="deleteBtn"
-            />
-          </>
+          )}
+        </Modal>
+        <Modal></Modal>
+        <Posts />
+        {/* <button onClick={() => setUploadModal(true)}>Create Post</button> */}
+        {uploadModal && (
+          <UploadPost close={() => setUploadModal(false)} modal="true" />
         )}
-        {updateProfile && (
-          <div>
-            <form onSubmit={onProfileUpdate} className="form">
-              <FormBody formValues={editProfile} />
-              <Button title="Save Changes" cname="submitBtn" />
-              {error && <div>Error updating profile, please try again.</div>}
-            </form>
-          </div>
-        )}
-      </Modal>
-      <Posts />
-      <button onClick={() => setUploadModal(true)}>Create Post</button>
-      {uploadModal && (
-        <UploadPost close={() => setUploadModal(false)} modal="true" />
-      )}
-    </div>
+      </div>
+    </>
   );
 }

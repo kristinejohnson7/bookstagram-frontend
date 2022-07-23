@@ -1,0 +1,42 @@
+.navBar {
+  background-color: black;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 20px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.navLogo {
+  width: 53px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  color: white;
+  gap: 11px;
+}
+
+.navLogo img {
+  width: 100%;
+}
+
+.navOptions {
+  display: flex;
+}
+
+.userIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: 2px solid white; */
+  color: white;
+  cursor: pointer;
+}
+
+.userIcon:hover {
+  color: #006158
+}

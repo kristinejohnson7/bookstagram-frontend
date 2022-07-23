@@ -1,6 +1,5 @@
 import React, { useState, createContext, useContext } from "react";
 import "./App.css";
-import Hero from "./components/Hero/Hero";
 import {
   BrowserRouter as Router,
   Routes,

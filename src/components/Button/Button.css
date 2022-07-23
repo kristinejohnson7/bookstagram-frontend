@@ -12,8 +12,7 @@
 }
 
 .profileBtn {
-  background-color: rgba(1, 135, 135, 0.6);
-  color: white;
+  color: #006158;
   margin-bottom: 20px;
 }
 
@@ -26,15 +25,22 @@
   font-weight: 400;  
 }
 
+.darkBtn {
+  border: 2px solid white;
+  color: white;
+  width: 100%;
+}
+
 .logoutBtn {
-  background: var(--primary);
+  background: #006158;
   color: white;
 }
 
 .deleteBtn {
-  background: #a3535b;
+  background: black;
   color: white;
   margin-top: 20px;
+  border: 2px solid black;
 }
 
 .themeBtn {
@@ -48,17 +54,17 @@
   color: white;
 }
 
-.logoutBtn:hover { background: var(--primary-nav) }
-
-.submitBtn:hover {
-  background: var(--secondary-var);
-  color: white;
+.submitBtn:hover,
+.logoutBtn:hover {
+  background: #DACDC3;
+  color: black;
+  border: 2px solid #DACDC3;
 }
 
 .deleteBtn:hover { background: #721C24 }
 
 .profileBtn:hover, 
 .themeBtn:hover{
-  background: var(--secondary-var);
+  background: #EDE6E0;
 }
 

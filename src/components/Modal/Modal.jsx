@@ -9,7 +9,6 @@ const Modal = ({ children, title, close, isOpen }) => (
         <div className="modal-dialog">
           <div className="model-content">
             <div className="modal-header">
-              <h5 className="modal-title">{title}</h5>
               <button onClick={() => close(false)} className="close">
                 &times;
               </button>

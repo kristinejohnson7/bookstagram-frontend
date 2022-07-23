@@ -38,14 +38,19 @@ class User {
     this.id = _id;
     this.name = name;
     this.email = email;
+    localStorage.setItem("userId", this.id);
   }
 }
 
 export class AuthService extends User {
   constructor() {
     super();
-    this.authToken = "";
-    this.bearerHeader = {};
+    this.authToken = localStorage.getItem("authToken");
+    this.bearerHeader = this.authToken
+      ? this.setBearerHeader(this.authToken)
+      : {};
+    console.log("auth", this.authToken);
+    console.log("bear", this.bearerHeader);
   }
 
   logoutUser() {
@@ -59,12 +64,14 @@ export class AuthService extends User {
 
   setAuthToken(token) {
     this.authToken = token;
+    localStorage.setItem("authToken", token);
   }
   setBearerHeader(token) {
     this.bearerHeader = {
       // "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     };
+    return this.bearerHeader;
   }
 
   getBearerHeader = () => this.bearerHeader;
@@ -163,8 +170,6 @@ export class PostService {
   constructor(authHeader) {
     this.getAuthHeader = authHeader;
     this.posts = [];
-    this.s3Url = "";
-    this.s3Key = "";
   }
 
   setPosts(newPosts) {
@@ -207,30 +212,15 @@ export class PostService {
   //   }
   // }
 
-  // async createPost(body) {
-  //   const headers = this.getAuthHeader();
-  //   console.log("headers", headers);
-  //   try {
-  //     // const body = {
-  //     //   photo: photo,
-  //     //   description: description,
-  //     //   title: title,
-  //     // };
-  //     const response = await axios.post(URL_GET_POSTS, body, { headers });
-  //     console.log("response", response);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
-
-  async createPost(image, description, title) {
+  async createPost(body) {
     const headers = this.getAuthHeader();
     try {
-      const body = {
-        image: image,
-        description: description,
-        title: title,
-      };
+      console.log(body, "body");
+      // const body = {
+      //   photo: photo,
+      //   description: description,
+      //   title: title,
+      // };
       const response = await axios.post(URL_GET_POSTS, body, { headers });
       console.log("response", response);
     } catch (err) {

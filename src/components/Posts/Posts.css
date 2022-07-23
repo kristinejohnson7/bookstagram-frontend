@@ -1,0 +1,64 @@
+.postsContainer {
+  margin: auto;
+  margin-top: 50px;
+}
+
+.postCard {
+  max-width: 450px;
+  height: 847px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 7px;
+  text-overflow: ellipsis;
+  box-shadow: #DACDC3 0px 0px 0px 1px, #DACDC3 0px 0px 0px 1px inset;
+} 
+
+.cardName {
+  font-size: 15px;
+  font-weight: 600;
+  margin-left: 13px;
+}
+
+.postCardImg {
+  height: 587px;
+}
+
+.postCardImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.postCardText, 
+.cardDate {
+  padding: 0 15px;
+}
+
+.postCardText {
+  font-size: 15px;
+}
+
+.postCardText .cardLikes {
+  margin-top: 9px;
+  cursor: pointer;
+}
+
+.postCardText .cardLikes:hover {
+  color: #006158;
+}
+
+.postCardText p {
+  margin: 0;
+}
+
+.postCardText p span {
+  font-weight: 600;
+  margin-right: 9px;
+}
+
+.cardDate {
+  color: #BEA48D;
+  font-size: 12px;
+}
