@@ -1,5 +1,6 @@
+import { toHaveStyle } from "@testing-library/jest-dom/dist/matchers";
 import axios from "axios";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 
 const BASE_URL = "http://localhost:5005/api/v1";
 const URL_ACCOUNT = `${BASE_URL}/auth/me`;
@@ -23,7 +24,7 @@ class User {
     this.name = "";
     this.email = "";
     this.isLoggedIn = false;
-    console.log(this.id, "constructor");
+    console.log(this.name, "set data name in constructor");
   }
 
   setUserEmail(email) {
@@ -66,6 +67,11 @@ export class AuthService extends User {
     this.authToken = token;
     localStorage.setItem("authToken", token);
   }
+
+  getAuthToken() {
+    return this.authToken || localStorage.getItem("authToken");
+  }
+
   setBearerHeader(token) {
     this.bearerHeader = {
       // "Content-Type": "application/json",
@@ -124,18 +130,6 @@ export class AuthService extends User {
     }
   }
 
-  // async findUserByEmail() {
-  //   const headers = this.getBearerHeader();
-  //   try {
-  //     const response = await axios.get(URL_USER_BY_EMAIL + this.email, {
-  //       headers,
-  //     });
-  //     this.setUserData(response.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
-
   async deleteUser() {
     const headers = this.getBearerHeader();
     const userId = this.id;
@@ -156,6 +150,7 @@ export class AuthService extends User {
       email: email,
     };
     try {
+      console.log("thisid", this.id);
       const response = await axios.put(URL_USER + this.id, body, { headers });
       this.setUserData(response);
       return this.user;
@@ -191,28 +186,55 @@ export class PostService {
     }
   }
 
-  // async getS3Url() {
-  //   try {
-  //     const url = await axios.get();
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
+  async findAllLikesForPost(postId) {
+    try {
+      const response = await axios.get(`${URL_GET_POSTS}likes/${postId}`);
+      // this.posts.push(response.data.data);
+      const postLikes = response.data.data;
+      console.log("postLikes", postLikes);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
 
-  // async getS3Url(headers) {
-  //   try {
-  //     const response = await axios
-  //       .get(`${BASE_URL}/s3Url`, { headers })
-  //       .then((res) => res.json());
-  //     this.setS3Url(response.data.url);
-  //     this.setS3Key(response.data.key);
-  //   } catch (err) {
-  //     console.error(err);
-  //     throw err;
-  //   }
-  // }
+  async createLikeForPost(postId, userId) {
+    const headers = this.getAuthHeader();
+    try {
+      const body = { likes: [`${userId}`] };
+      const response = await axios.put(
+        `${URL_GET_POSTS}likes/${postId}`,
+        body,
+        { headers }
+      );
+      // this.posts.push(response.data.data);
+      const postLikes = response.data.data;
+      console.log("postLikes", postLikes);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
 
-  async createPost(body) {
+  async deleteLikeForPost(postId, userId) {
+    const headers = this.getAuthHeader();
+    console.log("postid", postId);
+    console.log("user", userId);
+    try {
+      const response = await axios.delete(
+        `${URL_GET_POSTS}likes/${postId}/${userId}`,
+        { headers }
+      );
+      // this.posts.push(response.data.data);
+      const postLikes = response.data.data;
+      console.log("postLikes", postLikes);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async createPost(body, setProgress) {
     const headers = this.getAuthHeader();
     try {
       console.log(body, "body");
@@ -221,7 +243,14 @@ export class PostService {
       //   description: description,
       //   title: title,
       // };
-      const response = await axios.post(URL_GET_POSTS, body, { headers });
+      const response = await axios.post(URL_GET_POSTS, body, {
+        headers,
+        "Content-Type": "multipart/form-data",
+        onUploadProgress: (data) => {
+          console.log("data", data);
+          return setProgress(Math.round((100 * data.loaded) / data.total));
+        },
+      });
       console.log("response", response);
     } catch (err) {
       console.error(err);
@@ -239,109 +268,17 @@ export class PostService {
     }
   }
 
-  async updateMessage(id, body) {
+  async updateMessage(id, title, description) {
     const headers = this.getAuthHeader();
+    const body = {
+      title: title,
+      description: description,
+    };
     try {
-      const response = await axios.put(URL_GET_POSTS + id, body, { headers });
-      console.log("response", response);
+      await axios.put(URL_GET_POSTS + id, body, { headers });
     } catch (error) {
       console.error(error);
       throw error;
     }
-  }
-}
-
-export class SocketService {
-  socket = io("http://localhost:3005/");
-  constructor(chatService) {
-    this.chatService = chatService;
-  }
-
-  establishConnection() {
-    console.log("client connect");
-    this.socket.connect();
-  }
-
-  closeConnection() {
-    console.log("client disconnect");
-    this.socket.disconnect();
-  }
-
-  addChannel(name, description) {
-    this.socket.emit("newChannel", name, description);
-  }
-
-  getChannel(cb) {
-    this.socket.on("channelCreated", (name, description, id) => {
-      const channel = { name, description, id };
-      this.chatService.addChannel(channel);
-      const channelList = this.chatService.getAllChannels();
-      cb(channelList);
-    });
-  }
-
-  addMessage(messageBody, channelId, user) {
-    const { userName, userId, userAvatar, userAvatarColor } = user;
-    if (!!messageBody && !!channelId && !!user) {
-      this.socket.emit(
-        "newMessage",
-        messageBody,
-        userId,
-        channelId,
-        userName,
-        userAvatar,
-        userAvatarColor
-      );
-    }
-  }
-
-  getChatMessage(cb) {
-    this.socket.on(
-      "messageCreated",
-      (
-        messageBody,
-        userId,
-        channelId,
-        userName,
-        userAvatar,
-        userAvatarColor,
-        id,
-        timeStamp
-      ) => {
-        const channel = this.chatService.getSelectedChannel();
-        const chat = {
-          messageBody,
-          userId,
-          channelId,
-          userName,
-          userAvatar,
-          userAvatarColor,
-          id,
-          timeStamp,
-        };
-        if (
-          channelId !== channel.id &&
-          !this.chatService.unreadChannels.includes(channelId)
-        ) {
-          this.chatService.addToUnread(channelId);
-        }
-        this.chatService.messages = [...this.chatService.messages, chat];
-        cb(chat, this.chatService.messages);
-      }
-    );
-  }
-
-  startTyping(userName, channelId) {
-    this.socket.emit("startType", userName, channelId);
-  }
-
-  stopTyping(userName) {
-    this.socket.emit("startType", userName);
-  }
-
-  getUserTyping(cb) {
-    this.socket.on("userTypingUpdate", (typingUsers) => {
-      cb(typingUsers);
-    });
   }
 }

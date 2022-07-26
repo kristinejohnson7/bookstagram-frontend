@@ -5,7 +5,7 @@
 
 .postCard {
   max-width: 450px;
-  height: 847px;
+  height: 100%;
   margin-bottom: 30px;
   display: flex;
   flex-direction: column;
@@ -22,13 +22,13 @@
 }
 
 .postCardImg {
-  height: 587px;
+  height: 537px;
 }
 
 .postCardImg img {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: cover;
 }
 
 .postCardText, 
@@ -41,12 +41,29 @@
 }
 
 .postCardText .cardLikes {
-  margin-top: 9px;
   cursor: pointer;
+  border: none;
+  background-color: transparent;
 }
 
 .postCardText .cardLikes:hover {
   color: #006158;
+}
+
+.likeEdit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 9px;
+}
+
+.editIcons {
+  color: rgb(62, 60, 60);
+}
+
+.editIcons i {
+  cursor: pointer;
+  margin-right: 7px;
 }
 
 .postCardText p {
@@ -56,6 +73,19 @@
 .postCardText p span {
   font-weight: 600;
   margin-right: 9px;
+}
+
+.updateForm input {
+  margin-right: 5px;
+}
+
+.updateForm .updateSubmit {
+  border: none;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #006158;
+  color: white;
+  cursor: pointer;
 }
 
 .cardDate {

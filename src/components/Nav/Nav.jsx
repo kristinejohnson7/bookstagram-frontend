@@ -1,31 +1,47 @@
-import React from "react";
-import Button from "../Button/Button";
+import React, { useContext } from "react";
 import logo from "../../assets/logo.png";
 import "./Nav.css";
+import PostContext from "../../PostContext";
+import { Link } from "react-router-dom";
 
 export default function Nav({ profileModal, uploadModal }) {
+  const { posts, setFilteredPosts } = useContext(PostContext);
+
+  const handleFilter = (event) => {
+    const searchWord = event.target.value;
+    const newFilter = posts.filter((post) => {
+      return post.title.toLowerCase().includes(searchWord.toLowerCase());
+    });
+    if (searchWord === "") {
+      setFilteredPosts(posts);
+    } else {
+      setFilteredPosts(newFilter);
+    }
+  };
+
   return (
     <nav className="navBar">
-      <div className="navLogo">
+      <Link className="navLogo" to="/feed">
         <img src={logo} alt="bookstagram logo" />
         <h2>bookstagram</h2>
-      </div>
+      </Link>
 
       <div className="navOptions">
-        <div className="userIcon">
-          <i class="fa-regular fa-compass fa-lg"></i>
+        <div className="postSearch">
+          <input type="text" onChange={handleFilter} />
         </div>
+        <Link to="/explore" className="userIcon">
+          <i className="fa-regular fa-compass fa-lg"></i>
+        </Link>
         <div className="userIcon">
-          <i class="fa-regular fa-heart fa-lg"></i>
+          <i className="fa-regular fa-heart fa-lg"></i>
         </div>
         <div className="userIcon" onClick={uploadModal}>
-          <i class="fa-solid fa-circle-plus fa-lg"></i>
+          <i className="fa-solid fa-circle-plus fa-lg"></i>
         </div>
         <div className="userIcon" onClick={profileModal}>
-          <i class="fa-solid fa-user fa-lg"></i>
+          <i className="fa-solid fa-user fa-lg"></i>
         </div>
-
-        {/* <Button handleOnClick={setModal} title="Profile" cname="darkBtn" /> */}
       </div>
     </nav>
   );

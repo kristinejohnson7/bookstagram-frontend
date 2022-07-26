@@ -5,11 +5,15 @@ import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
 import "./UploadPost.css";
 import { useDropzone } from "react-dropzone";
+import PostContext from "../../PostContext";
+import { ProgressBar } from "react-bootstrap";
 
 export default function UploadPost({ close, modal }) {
   const { postService } = useContext(UserContext);
+  const { getPosts } = useContext(PostContext);
   const [error, setError] = useState(false);
   const [files, setFiles] = useState([]);
+  const [progress, setProgress] = useState();
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/",
@@ -34,28 +38,29 @@ export default function UploadPost({ close, modal }) {
 
   const uploadPostData = [
     // { type: "file", name: "photo" },
-    { type: "text", name: "title", placeholder: "Enter your post title" },
+    {
+      type: "text",
+      name: "title",
+      placeholder: "Enter your post title",
+      key: 1,
+    },
     {
       type: "text",
       name: "description",
       placeholder: "Enter your post description",
+      key: 2,
     },
   ];
 
   const onPostUpload = (e) => {
     e.preventDefault();
-    console.log(e.target);
     const fData = new FormData(e.target);
-    // const postData = {
-    //   photo: fData.get("image"),
-    //   description: fData.get("description"),
-    //   title: fData.get("title"),
-    // };
     fData.set("photo", files[0], files[0].name);
     fData.set("user", localStorage.getItem("userId"));
     postService
-      .createPost(fData)
-      .then(() => close)
+      .createPost(fData, setProgress)
+      .then(() => close())
+      .then(getPosts)
       .catch((error) => {
         console.error("Upload post", error);
         setError(true);
@@ -71,6 +76,9 @@ export default function UploadPost({ close, modal }) {
             <p>Drag Files or Click to Browse</p>
           </div>
           <div className="imagePreview">{images}</div>
+          {!error && progress && (
+            <ProgressBar now={progress} label={`${progress}%`} />
+          )}
         </div>
         <div className="uploadInputs">
           <FormBody formValues={uploadPostData} />

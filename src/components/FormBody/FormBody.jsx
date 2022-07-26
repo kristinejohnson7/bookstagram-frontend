@@ -5,7 +5,7 @@ export default function Form({ onChange, formValues }) {
   return (
     <>
       {formValues.map((input) => (
-        <label htmlFor={input.forLabel}>
+        <label htmlFor={input.forLabel} key={input.key}>
           {input?.label}
           <input
             className="form-control"
