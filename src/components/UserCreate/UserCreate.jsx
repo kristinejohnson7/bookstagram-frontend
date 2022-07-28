@@ -5,10 +5,12 @@ import { UserContext } from "../../App";
 import Alert from "../Alert/Alert";
 import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
+import profile from "../../assets/profile.jpg";
 
 const UserCreate = ({ closeRegister }) => {
   const { authService } = useContext(UserContext);
   const INIT_STATE = {
+    photo: null,
     userName: "",
     email: "",
     password: "",
@@ -16,36 +18,31 @@ const UserCreate = ({ closeRegister }) => {
   const [userInfo, setUserInfo] = useState(INIT_STATE);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  // const [uploadingImg, setUploadingImg] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const onChange = ({ target: { name, value } }) => {
     setUserInfo({ ...userInfo, [name]: value });
   };
-
-  // let navigate = useNavigate();
-  // const routeChange = (path) => {
-  //   let pathName = `${path}`;
-  //   navigate(pathName);
-  // };
 
   let navigate = useNavigate();
   let location = useLocation();
 
   const createUser = (e) => {
     e.preventDefault();
-    const { userName, email, password } = userInfo;
+    const { userName, email, password, photo } = userInfo;
     if (!!userName && !!email && !!password) {
       setIsLoading(true);
       let from = location.state?.from.pathname || "/feed";
-
+      console.log("submit user info", userInfo);
       authService
-        .createUser(userName, email, password)
+        .createUser(userName, email, password, photo)
         .then(() => {
           authService
             .loginUser(email, password)
             .then(() => {
               setUserInfo(INIT_STATE);
               navigate(from, { replace: true });
-              console.log("user info updated", userInfo);
             })
             .catch((error) => {
               console.error("logging in user", error);
@@ -57,6 +54,17 @@ const UserCreate = ({ closeRegister }) => {
           setError(true);
         });
       setIsLoading(false);
+    }
+  };
+
+  const validateImg = (e) => {
+    const file = e.target.files[0];
+    if (file.size >= 1048576) {
+      return alert("Max file size is 1mb");
+    } else {
+      setUserInfo({ ...userInfo, photo: file });
+      console.log("file name", file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -91,13 +99,30 @@ const UserCreate = ({ closeRegister }) => {
         {isLoading ? <div>Loading...</div> : null}
         <h3 className="title">Create an account</h3>
         <form onSubmit={createUser} className="form">
+          <div className="signup-profile-pic__container">
+            <img
+              src={imagePreview || profile}
+              alt="profile"
+              className="signup-profile-pic"
+            />
+            <label htmlFor="image-upload" className="image-upload-label">
+              <i className="fas fa-plus-circle add-picture-icon"></i>
+            </label>
+            <input
+              type="file"
+              id="image-upload"
+              name="photo"
+              hidden
+              accept="image/png, image/jpeg"
+              onChange={validateImg}
+            />
+          </div>
           <FormBody onChange={onChange} formValues={userCreateValues} />
-          <Button cname="submitBtn" title="Create Account" />
+          <Button
+            cname="submitBtn"
+            title={!isLoading ? "Create Account" : "Creating your account"}
+          />
         </form>
-        {/* <div className="footer-text">
-          Already have an Account? Login{" "}
-          <button onClick={() => closeRegister(true)}>HERE</button>
-        </div> */}
       </div>
     </>
   );

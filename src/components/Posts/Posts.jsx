@@ -5,6 +5,7 @@ import "./Posts.css";
 import PostContext from "../../PostContext";
 import dayjs from "dayjs";
 import { UserContext } from "../../App";
+import { Progress } from "antd";
 
 export default function Posts() {
   const { filteredPosts, handleLikePost } = useContext(PostContext);
@@ -52,6 +53,8 @@ export default function Posts() {
         <div> Loading...</div>
       ) : (
         <>
+          {/* <Progress percent={33} /> */}
+
           {!!filteredPosts.length ? (
             filteredPosts.map((post, index) => {
               const {

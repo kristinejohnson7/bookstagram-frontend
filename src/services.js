@@ -82,12 +82,14 @@ export class AuthService extends User {
 
   getBearerHeader = () => this.bearerHeader;
 
-  async createUser(name, email, password) {
+  async createUser(name, email, password, photo) {
     const headers = this.getBearerHeader();
+    console.log("photo", photo);
     const body = {
       name: name,
       email: email,
       password: password,
+      photo: photo,
     };
     try {
       const response = await axios.post(URL_REGISTER, body, { headers });
@@ -165,6 +167,7 @@ export class PostService {
   constructor(authHeader) {
     this.getAuthHeader = authHeader;
     this.posts = [];
+    this.uploadProgressCallback = null;
   }
 
   setPosts(newPosts) {
@@ -234,7 +237,7 @@ export class PostService {
     }
   }
 
-  async createPost(body, setProgress) {
+  async createPost(body) {
     const headers = this.getAuthHeader();
     try {
       console.log(body, "body");
@@ -245,11 +248,11 @@ export class PostService {
       // };
       const response = await axios.post(URL_GET_POSTS, body, {
         headers,
-        "Content-Type": "multipart/form-data",
-        onUploadProgress: (data) => {
-          console.log("data", data);
-          return setProgress(Math.round((100 * data.loaded) / data.total));
-        },
+        // "Content-Type": "multipart/form-data",
+        // onUploadProgress: (data) => {
+        //   console.log("data", data);
+        //   return setProgress(Math.round((100 * data.loaded) / data.total));
+        // },
       });
       console.log("response", response);
     } catch (err) {
