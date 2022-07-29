@@ -237,7 +237,7 @@ export class PostService {
     }
   }
 
-  async createPost(body) {
+  async createPost(body, options) {
     const headers = this.getAuthHeader();
     try {
       console.log(body, "body");
@@ -248,6 +248,7 @@ export class PostService {
       // };
       const response = await axios.post(URL_GET_POSTS, body, {
         headers,
+        ...options,
         // "Content-Type": "multipart/form-data",
         // onUploadProgress: (data) => {
         //   console.log("data", data);

@@ -30,26 +30,23 @@ export default function UploadPost({ close, modal }) {
     },
   ];
 
+  // const onPostUpload = (e) => {
+
+  // postService
+  //   .createPost(fData)
+  //   .then(() => close())
+  //   .then(getPosts)
+
+  // };
+
   const onPostUpload = (e) => {
     e.preventDefault();
     const fData = new FormData(e.target);
-    fData.set("photo", files[0], files[0].name);
+    // fData.append("file", fData.get("photo"));
+    console.log(fData.get("photo"));
+    // fData.delete("photo");
+    // fData.set("photo", files[0], files[0].name);
     fData.set("user", localStorage.getItem("userId"));
-    postService
-      .createPost(fData)
-      .then(() => close())
-      .then(getPosts)
-      .catch((error) => {
-        console.error("Upload post", error);
-        setError(true);
-      });
-    console.log("good");
-  };
-
-  const uploadFile = ({ target: { files } }) => {
-    console.log(files[0]);
-    let data = new FormData();
-    data.append("file", files[0]);
     const options = {
       onUploadProgress: (progressEvent) => {
         const { loaded, total } = progressEvent;
@@ -60,18 +57,24 @@ export default function UploadPost({ close, modal }) {
         }
       },
     };
-    axios
-      .post("http://localhost:5005/api/v1/posts", data, options)
+    postService
+      .createPost(fData, options)
       .then((res) => {
         console.log(res);
         setPercentage(100);
+        getPosts();
+        close();
+      })
+      .catch((error) => {
+        console.error("Upload post", error);
+        setError(true);
       });
   };
 
   return (
     <Modal title="Profile" isOpen={true} close={close}>
       <form id="postForm" onSubmit={onPostUpload} className="uploadPostForm">
-        <input type="file" onChange={uploadFile} />
+        <input type="file" name="photo" />
         {percentage > 0 && <Progress percent={percentage} />}
         <div className="uploadInputs">
           <FormBody formValues={uploadPostData} />
