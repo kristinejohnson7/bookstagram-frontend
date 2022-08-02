@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./UserCreate.css";
 import { UserContext } from "../../App";
 import Alert from "../Alert/Alert";
@@ -11,6 +11,7 @@ const UserCreate = ({ closeRegister }) => {
   const { authService } = useContext(UserContext);
   const INIT_STATE = {
     photo: null,
+    name: "",
     userName: "",
     email: "",
     password: "",
@@ -18,6 +19,8 @@ const UserCreate = ({ closeRegister }) => {
   const [userInfo, setUserInfo] = useState(INIT_STATE);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [percentage, setPercentage] = useState(0);
+
   // const [uploadingImg, setUploadingImg] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -26,23 +29,30 @@ const UserCreate = ({ closeRegister }) => {
   };
 
   let navigate = useNavigate();
-  let location = useLocation();
 
   const createUser = (e) => {
     e.preventDefault();
-    const { userName, email, password, photo } = userInfo;
+    const fData = new FormData(e.target);
     if (!!userName && !!email && !!password) {
       setIsLoading(true);
-      let from = location.state?.from.pathname || "/feed";
-      console.log("submit user info", userInfo);
+      const options = {
+        onUploadProgress: (progressEvent) => {
+          const { loaded, total } = progressEvent;
+          let percent = Math.floor((loaded * 100) / total);
+          console.log(`${loaded}kb of ${total}kb ${percent}%`);
+          if (percent < 100) {
+            setPercentage(percent);
+          }
+        },
+      };
       authService
-        .createUser(userName, email, password, photo)
-        .then(() => {
+        .createUser(fData, options)
+        .then((res) => {
           authService
             .loginUser(email, password)
             .then(() => {
               setUserInfo(INIT_STATE);
-              navigate(from, { replace: true });
+              navigate("/feed");
             })
             .catch((error) => {
               console.error("logging in user", error);
@@ -68,10 +78,16 @@ const UserCreate = ({ closeRegister }) => {
     }
   };
 
-  const { userName, email, password } = userInfo;
+  const { userName, email, password, name } = userInfo;
   const errorMsg = "Error creating account. Please try again.";
 
   const userCreateValues = [
+    {
+      value: `${name}`,
+      type: "text",
+      name: "name",
+      placeholder: "Enter name",
+    },
     {
       value: `${userName}`,
       type: "text",

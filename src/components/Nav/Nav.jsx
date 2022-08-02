@@ -30,17 +30,16 @@ export default function Nav({ profileModal, uploadModal }) {
         <div className="postSearch">
           <input type="text" onChange={handleFilter} />
         </div>
-        <Link to="/explore" className="userIcon">
-          <i className="fa-regular fa-compass fa-lg"></i>
-        </Link>
-        <div className="userIcon">
-          <i className="fa-regular fa-heart fa-lg"></i>
-        </div>
-        <div className="userIcon" onClick={uploadModal}>
-          <i className="fa-solid fa-circle-plus fa-lg"></i>
-        </div>
-        <div className="userIcon" onClick={profileModal}>
-          <i className="fa-solid fa-user fa-lg"></i>
+        <div className="navIcons">
+          <Link to="/explore" className="userIcon">
+            <i className="fa-regular fa-compass fa-lg"></i>
+          </Link>
+          <div className="userIcon" onClick={uploadModal}>
+            <i className="fa-solid fa-circle-plus fa-lg"></i>
+          </div>
+          <div className="userIcon" onClick={profileModal}>
+            <i className="fa-solid fa-user fa-lg"></i>
+          </div>
         </div>
       </div>
     </nav>

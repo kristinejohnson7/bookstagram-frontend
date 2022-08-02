@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useContext } from "react";
 import "./Posts.css";
-// import posting from "../../assets/post.jpg";
 import PostContext from "../../PostContext";
 import dayjs from "dayjs";
 import { UserContext } from "../../App";
-import { Progress } from "antd";
 
 export default function Posts() {
   const { filteredPosts, handleLikePost } = useContext(PostContext);
@@ -19,7 +17,6 @@ export default function Posts() {
   };
 
   const userId = localStorage.getItem("userId");
-  console.log("FILTERED POSTS", filteredPosts);
 
   const handleUpdatePost = (e, postId) => {
     e.preventDefault();
@@ -49,12 +46,10 @@ export default function Posts() {
 
   return (
     <div className="postsContainer">
-      {loadingPosts ? (
+      {loadingPosts && filteredPosts.length < 1 ? (
         <div> Loading...</div>
       ) : (
         <>
-          {/* <Progress percent={33} /> */}
-
           {!!filteredPosts.length ? (
             filteredPosts.map((post, index) => {
               const {

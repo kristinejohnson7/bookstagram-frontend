@@ -54,6 +54,7 @@ export default function UpdateProfile({ modal, modalToggle }) {
 
   const logoutUser = () => {
     modalToggle(false);
+    authService.logoutUser();
     //fixed memory leak from router not releasing socket io emitters
     window.location = "/";
   };

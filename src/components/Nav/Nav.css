@@ -18,8 +18,11 @@ a {
   height: 53px;
   display: flex;
   align-items: center;
-  color: white;
   gap: 11px;
+}
+
+.navLogo h2 {
+  color: white;
 }
 
 .navLogo img {
@@ -33,8 +36,13 @@ a {
 
 .navOptions input {
   background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 5px;
+  border-radius: 12px;
   margin-right: 11px;
+}
+
+.navIcons {
+  display: flex;
+  gap: 3px;
 }
 
 .userIcon {
@@ -44,11 +52,32 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* border: 2px solid white; */
   color: white;
   cursor: pointer;
 }
 
 .userIcon:hover {
   color: #006158
+}
+
+@media only screen and (max-width: 450px) {
+  .navBar {
+    flex-direction: column;
+  }
+  
+  .navOptions {
+    margin-top: 15px;
+  }
+}
+
+@media only screen and (max-width: 370px) {
+  .navBar {
+    flex-direction: column;
+  }
+  
+  .navOptions {
+    margin-top: 15px;
+    flex-direction: column;
+
+  }
 }

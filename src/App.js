@@ -13,26 +13,19 @@ import MainFeed from "./components/MainFeed/MainFeed";
 import { AuthService, PostService } from "./services";
 import { PostProvider } from "./PostContext";
 import Explore from "./components/Explore/Explore";
+import PasswordReset from "./components/PasswordReset/PasswordReset";
 
 const authService = new AuthService();
 const postService = new PostService(authService.getBearerHeader);
-// const socketService = new SocketService(postService);
 export const UserContext = createContext();
 const AuthProvider = ({ children }) => {
   const context = {
     authService,
     postService,
-    // socketService,
-    // appSelectedChannel: {},
-    // appSetChannel: (ch) => {
-    //   setAuthContext({ ...authContext, appSelectedChannel: ch });
-    //   chatService.setSelectedChannel(ch);
-    // },
   };
   const [authContext, setAuthContext] = useState(context);
 
   useEffect(() => {
-    // console.log(authContext);
     if (authService.getAuthToken()) {
       authService.getLoggedInUser();
     }
@@ -41,6 +34,17 @@ const AuthProvider = ({ children }) => {
   return (
     <UserContext.Provider value={authContext}>{children}</UserContext.Provider>
   );
+};
+
+const PrivateRoute = ({ children, ...props }) => {
+  const location = useLocation();
+  const context = useContext(UserContext);
+
+  if (!context.authService.isLoggedIn) {
+    return <Navigate {...props} to="/" state={{ from: location }} replace />;
+  }
+
+  return children;
 };
 
 function App() {
@@ -54,12 +58,20 @@ function App() {
             <Route
               path="/feed"
               element={
-                // <PrivateRoute>
-                <MainFeed />
-                /* </PrivateRoute> */
+                <PrivateRoute>
+                  <MainFeed />
+                </PrivateRoute>
               }
             />
-            <Route path="/explore" element={<Explore />} />
+            <Route
+              path="/explore"
+              element={
+                <PrivateRoute>
+                  <Explore />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/reset/:resetToken" element={<PasswordReset />} />
           </Routes>
         </Router>
       </PostProvider>
