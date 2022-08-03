@@ -40,3 +40,8 @@ input[type="text"].disabled {
   padding: 15px 10px;
   border-radius: 3px;
 }
+
+.inputErrorMsg {
+  font-weight: 600;
+  color: #006158;
+}

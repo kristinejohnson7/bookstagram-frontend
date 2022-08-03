@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useContext } from "react";
 import "./Posts.css";
-// import posting from "../../assets/post.jpg";
 import PostContext from "../../PostContext";
 import dayjs from "dayjs";
 import { UserContext } from "../../App";
@@ -9,16 +8,14 @@ import { UserContext } from "../../App";
 export default function Posts() {
   const { filteredPosts, handleLikePost } = useContext(PostContext);
   const [updatePost, setUpdatePost] = useState(false);
-  const { posts, setFilteredPosts, getPosts, loadingPosts } =
-    useContext(PostContext);
-  const { authService, postService } = useContext(UserContext);
+  const { getPosts, loadingPosts } = useContext(PostContext);
+  const { postService } = useContext(UserContext);
 
   const handleLikeGrammar = (number) => {
     return number > 1 ? `${number} likes` : `${number} like`;
   };
 
   const userId = localStorage.getItem("userId");
-  console.log("FILTERED POSTS", filteredPosts);
 
   const handleUpdatePost = (e, postId) => {
     e.preventDefault();
@@ -48,7 +45,7 @@ export default function Posts() {
 
   return (
     <div className="postsContainer">
-      {loadingPosts ? (
+      {loadingPosts && filteredPosts.length < 1 ? (
         <div> Loading...</div>
       ) : (
         <>
@@ -102,7 +99,6 @@ export default function Posts() {
                         ? "Be the first to like this post!"
                         : handleLikeGrammar(likes.length)}
                     </p>
-
                     <div>
                       {!updatePost ? (
                         <p>
@@ -136,7 +132,6 @@ export default function Posts() {
                       )}
                     </div>
                   </div>
-
                   <p className="cardDate">
                     {dayjs(createdAt).format("dddd MMM DD YYYY, h:mm a")}
                   </p>

@@ -1,39 +1,43 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../App";
 import Alert from "../Alert/Alert";
-import logo from "../../assets/logo.png";
 import "./UserLogin.css";
 import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
 import UserCreate from "../UserCreate/UserCreate";
+import Modal from "../Modal/Modal";
+import { useEffect } from "react";
+import HeroLogo from "../HeroLogo/HeroLogo";
 
 const UserLogin = () => {
   const { authService } = useContext(UserContext);
   const [userLogins, setUserLogins] = useState({ email: "", password: "" });
   const [error, setError] = useState(false);
   const [register, setRegister] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
 
   const onChange = ({ target: { name, value } }) => {
     setUserLogins({ ...userLogins, [name]: value });
   };
 
   let navigate = useNavigate();
-  let location = useLocation();
-  // const routeChange = (path) => {
-  //   let pathName = `${path}`;
-  //   navigate(pathName);
-  // };
+
+  useEffect(() => {
+    if (authService.isLoggedIn) {
+      navigate("/feed", {
+        replace: true,
+      });
+    }
+  }, [authService.isLoggedIn]);
 
   const onLoginUser = (e) => {
     e.preventDefault();
     const { email, password } = userLogins;
     if (!!email && !!password) {
-      let from = location.state?.from.pathname || "/feed";
-      console.log(location, "location", from);
       authService
         .loginUser(email, password)
-        .then(() => navigate(from, { replace: true }))
+        .then(() => navigate("/feed"))
         .catch(() => {
           setError(true);
           setUserLogins({ email: "", password: "" });
@@ -41,9 +45,18 @@ const UserLogin = () => {
     }
   };
 
-  // const showUserRegister = () => {
-  //   set
-  // }
+  const resetPassword = (e) => {
+    e.preventDefault();
+    const fData = new FormData(e.target);
+    const email = fData.get("email");
+    authService
+      .forgotPassword(email)
+      .then(() => setForgotPassword(false))
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   const errorMsg = "Sorry, you entered an incorrect email or password";
 
   const loginData = [
@@ -52,23 +65,20 @@ const UserLogin = () => {
       type: "email",
       name: "email",
       placeholder: "youremail@gmail.com",
+      key: 1,
     },
     {
       value: userLogins.password,
       type: "password",
       name: "password",
       placeholder: "password",
+      key: 2,
     },
   ];
 
   return (
     <div className="heroContainer">
-      <div className="heroTopContainer">
-        <div className="heroLogo">
-          <img src={logo} alt="bookstagram logo" />
-        </div>
-        <h1>bookstagram</h1>
-      </div>
+      <HeroLogo />
       <div className="heroBtmContainer">
         <div className="loginContainer">
           {error ? <Alert message={errorMsg} type="alert-danger" /> : null}
@@ -99,10 +109,38 @@ const UserLogin = () => {
           {register && <UserCreate closeRegister={setRegister} />}
           <div className="footer-text">
             {!register ? (
-              <div>
-                No Account? Create one
-                <button onClick={() => setRegister(true)}> HERE</button>
-              </div>
+              <>
+                <button
+                  className="forgotPassword"
+                  onClick={() => setForgotPassword(true)}
+                >
+                  Forgot your password?
+                </button>
+                {forgotPassword && (
+                  <Modal
+                    isOpen={forgotPassword}
+                    close={() => setForgotPassword(false)}
+                  >
+                    <h3>Forgot your password?</h3>
+                    <h5>Enter your email and reset your password.</h5>
+                    <form
+                      onSubmit={resetPassword}
+                      className="forgotPasswordForm"
+                    >
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email"
+                      />
+                      <Button title="Reset Password" cname="submitBtn" />
+                    </form>
+                  </Modal>
+                )}
+                <div>
+                  No Account? Create one
+                  <button onClick={() => setRegister(true)}> HERE</button>
+                </div>
+              </>
             ) : (
               <div>
                 Already have an Account? Login

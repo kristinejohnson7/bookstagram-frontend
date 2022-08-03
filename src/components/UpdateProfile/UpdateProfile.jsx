@@ -5,20 +5,17 @@ import FormBody from "../FormBody/FormBody";
 import { UserContext } from "../../App";
 
 export default function UpdateProfile({ modal, modalToggle }) {
-  const { authService, socketService, postService } = useContext(UserContext);
+  const { authService } = useContext(UserContext);
 
-  const CURRENT_PROFILE = {
-    name: authService.name,
-    email: authService.email,
-    avatarName: authService.avatarName,
-    avatarColor: authService.avatarColor,
-  };
+  // const CURRENT_PROFILE = {
+  //   name: authService.name,
+  //   email: authService.email,
+  //   avatarName: authService.avatarName,
+  //   avatarColor: authService.avatarColor,
+  // };
   const [updateProfile, setUpdateProfile] = useState(false);
-  const [userInfo, setUserInfo] = useState(CURRENT_PROFILE);
-  // const [modal, setModal] = useState(false);
+  // const [userInfo, setUserInfo] = useState(CURRENT_PROFILE);
   const [error, setError] = useState(false);
-
-  console.log("auth service name", authService.name);
 
   const handleUpdateProfile = () => {
     setUpdateProfile(true);
@@ -33,11 +30,11 @@ export default function UpdateProfile({ modal, modalToggle }) {
       email: fData.get("email"),
     };
     const id = authService.id;
-    setUserInfo(userData);
+    // setUserInfo(userData);
     authService
       .updateUser(userData)
       .then((user) => {
-        setUserInfo(user);
+        // setUserInfo(user);
         authService.setUserData({
           _id: id,
           name: userData.name,
@@ -54,7 +51,7 @@ export default function UpdateProfile({ modal, modalToggle }) {
 
   const logoutUser = () => {
     modalToggle(false);
-    //fixed memory leak from router not releasing socket io emitters
+    authService.logoutUser();
     window.location = "/";
   };
 
@@ -63,13 +60,13 @@ export default function UpdateProfile({ modal, modalToggle }) {
       "Are you sure you want to delete your account? This action cannot be undone."
     );
     if (result) {
-      // authService.logoutUser();
       authService
         .deleteUser()
         .then(() => logoutUser())
         .catch((err) => console.error(err));
     }
   };
+
   const editProfile = [
     {
       type: "text",

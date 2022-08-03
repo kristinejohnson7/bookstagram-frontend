@@ -19,6 +19,7 @@
   font-size: 15px;
   font-weight: 600;
   margin-left: 13px;
+  margin-top: 10px;
 }
 
 .postCardImg {
@@ -92,3 +93,16 @@
   color: #BEA48D;
   font-size: 12px;
 }
+
+@media only screen and (max-width: 450px) {
+  .postCard {
+    max-width: 350px;
+  }
+}
+
+@media only screen and (max-width: 370px) {
+  .postCard {
+    max-width: 300px;
+  }
+}
+

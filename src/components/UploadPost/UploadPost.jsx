@@ -4,40 +4,18 @@ import { UserContext } from "../../App";
 import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
 import "./UploadPost.css";
-import { useDropzone } from "react-dropzone";
 import PostContext from "../../PostContext";
-import { ProgressBar } from "react-bootstrap";
+import { Progress } from "antd";
 
-export default function UploadPost({ close, modal }) {
+export default function UploadPost({ close }) {
   const { postService } = useContext(UserContext);
   const { getPosts } = useContext(PostContext);
-  const [error, setError] = useState(false);
-  const [files, setFiles] = useState([]);
-  const [progress, setProgress] = useState();
-
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/",
-    onDrop: (acceptFiles) => {
-      setFiles(
-        acceptFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
-      );
-    },
-  });
-
-  const images = files.map((file) => (
-    <div key={file.name}>
-      <div>
-        <img src={file.preview} alt="preview" style={{ width: "200px" }} />
-      </div>
-    </div>
-  ));
+  const [titleError, setTitleError] = useState(false);
+  const [file, setFile] = useState("");
+  const [percentage, setPercentage] = useState(0);
+  const [uploadError, setUploadError] = useState(false);
 
   const uploadPostData = [
-    // { type: "file", name: "photo" },
     {
       type: "text",
       name: "title",
@@ -52,37 +30,87 @@ export default function UploadPost({ close, modal }) {
     },
   ];
 
+  const checkErrorBeforeSave = (data) => {
+    let errorValue = "";
+    let isError = false;
+    Object.keys(data).forEach((val) => {
+      if (data[val].length === 0 || data[val] === null) {
+        errorValue = "Required";
+        isError = true;
+      }
+    });
+    setTitleError(errorValue);
+    return isError;
+  };
+
   const onPostUpload = (e) => {
     e.preventDefault();
     const fData = new FormData(e.target);
-    fData.set("photo", files[0], files[0].name);
-    fData.set("user", localStorage.getItem("userId"));
-    postService
-      .createPost(fData, setProgress)
-      .then(() => close())
-      .then(getPosts)
-      .catch((error) => {
-        console.error("Upload post", error);
-        setError(true);
-      });
+    const uploadPostData = {
+      title: fData.get("title"),
+    };
+    const errorCheck = checkErrorBeforeSave(uploadPostData);
+
+    if (!errorCheck) {
+      fData.set("user", localStorage.getItem("userId"));
+      const options = {
+        onUploadProgress: (progressEvent) => {
+          const { loaded, total } = progressEvent;
+          let percent = Math.floor((loaded * 100) / total);
+          if (percent < 100) {
+            setPercentage(percent);
+          }
+        },
+      };
+      postService
+        .createPost(fData, options)
+        .then((res) => {
+          console.log(res);
+          setPercentage(100);
+          getPosts();
+          close();
+        })
+        .catch((error) => {
+          console.error("Upload post", error);
+          setUploadError(true);
+        });
+    }
+  };
+
+  const imagePreview = (e) => {
+    setFile(URL.createObjectURL(e.target.files[0]));
   };
 
   return (
-    <Modal title="Profile" isOpen={modal} close={close}>
+    <Modal title="Profile" isOpen={true} close={close}>
       <form id="postForm" onSubmit={onPostUpload} className="uploadPostForm">
-        <div>
-          <div {...getRootProps()} className="dragPhotoContainer">
-            <input {...getInputProps()} />
-            <p>Drag Files or Click to Browse</p>
+        <label className="custom-file-upload">
+          <i className="fa-solid fa-upload fa-lg"></i>
+          <br />
+          Click or drag image to this area to upload
+          <input
+            type="file"
+            name="photo"
+            onChange={imagePreview}
+            accept="image/*"
+            required
+          />
+        </label>
+        {file && (
+          <div className="imgPreview">
+            <i className="fa-solid fa-x fa-lg" onClick={() => setFile("")}></i>
+            <img src={file} alt="post preview" />
           </div>
-          <div className="imagePreview">{images}</div>
-          {!error && progress && (
-            <ProgressBar now={progress} label={`${progress}%`} />
-          )}
-        </div>
+        )}
         <div className="uploadInputs">
-          <FormBody formValues={uploadPostData} />
+          <FormBody formValues={uploadPostData} error={titleError} />
           <Button cname="submitBtn" title="Create post" />
+          {percentage > 0 && <Progress percent={percentage} />}
+          {uploadError && (
+            <p className="alert alert-danger">
+              Error uploading post, please try again.
+            </p>
+          )}
         </div>
       </form>
     </Modal>

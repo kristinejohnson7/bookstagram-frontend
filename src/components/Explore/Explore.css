@@ -34,6 +34,42 @@
   margin-top: 30px;
 }
 
+.explorePostContainer {
+  margin: 20px auto;
+}
+
+.explorePostImg {
+  width: 90%;
+}
+
+.explorePostImg img {
+  width: 100%;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.explorePostContent {
+  margin-top: 15px;
+  margin-left: 20px;
+}
+
+.exploreHeaderLike {
+  display: flex;
+  justify-content: space-between;
+}
+
+.exploreHeaderLike h4 {
+  margin-right: 15px;
+}
+
+.exploreHeaderLike p {
+  margin-right: 100px;
+}
+
+.exploreLikeContainer i {
+  margin-right: 10px;
+}
+
 /* Anything udner 1024px */
 @media screen and (max-width: 1024px) {
   .image-grid {

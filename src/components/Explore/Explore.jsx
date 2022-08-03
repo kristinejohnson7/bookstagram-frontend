@@ -1,14 +1,13 @@
 import React, { useContext, useState } from "react";
 import "./Explore.css";
 import PostContext from "../../PostContext";
-import photo from "../../assets/post.jpg";
 import Nav from "../Nav/Nav";
 import UploadPost from "../UploadPost/UploadPost";
 import UpdateProfile from "../UpdateProfile/UpdateProfile";
 import Modal from "../Modal/Modal";
 
 export default function Explore() {
-  const { posts, setPosts } = useContext(PostContext);
+  const { posts } = useContext(PostContext);
   const [uploadModal, setUploadModal] = useState(false);
   const [modal, setModal] = useState(false);
   const [exploreModal, setExploreModal] = useState(false);
@@ -17,6 +16,15 @@ export default function Explore() {
   const handleExploreModal = (index) => {
     setCurrentPost(posts[index]);
     setExploreModal(true);
+  };
+
+  const handleLikeGrammar = (number) => {
+    return (
+      <div className="exploreLikeContainer">
+        <i className="fa-solid fa-heart"></i>
+        {number > 1 ? `${number} likes` : `${number} like`}
+      </div>
+    );
   };
 
   return (
@@ -28,14 +36,16 @@ export default function Explore() {
       {!!posts.length ? (
         <div class="image-grid">
           <img
-            class="image-grid-col-2 image-grid-row-2"
+            className="image-grid-col-2 image-grid-row-2"
             src={posts[0].photo}
             alt="architecture"
+            onClick={() => handleExploreModal(0)}
           />
           {posts.map((post, index) => {
             if (index !== 0) {
               return (
                 <img
+                  key={post.id}
                   src={post.photo}
                   alt="explore post"
                   onClick={() => handleExploreModal(index)}
@@ -49,7 +59,22 @@ export default function Explore() {
       )}
       {exploreModal && (
         <Modal isOpen={exploreModal} close={() => setExploreModal(false)}>
-          <div>{currentPost.title}</div>
+          <div className="explorePostContainer">
+            <div className="explorePostImg">
+              <img src={currentPost.photo} alt="post" />
+            </div>
+            <div className="explorePostContent">
+              <div className="exploreHeaderLike">
+                <h4>{currentPost.userName}</h4>
+                <p>
+                  {`${currentPost.likes.length}` <= 0
+                    ? "No likes yet!"
+                    : handleLikeGrammar(currentPost.likes.length)}
+                </p>
+              </div>
+              <div>{currentPost.title}</div>
+            </div>
+          </div>
         </Modal>
       )}
       <UpdateProfile modalToggle={setModal} modal={modal} />
