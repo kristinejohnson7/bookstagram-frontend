@@ -1,70 +1,31 @@
-# Getting Started with Create React App
+You are going to build a full-stack application for uploading and storing images. The main focus on this project is back-end, but you will still need to build a simple front-end.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a new app where people can take a picture of books they are reading or have found in antique shops/elsewhere and upload them. People can see a global feed of images.
 
-## Available Scripts
+## 🛠 Requirements:
 
-In the project directory, you can run:
+### Front-end
 
-### `npm start`
+1. User must be able to create an account with email/password
+2. User must be able to login with email/password
+3. There is a main page that displays a "feed" of all images that have been uploaded in the order they were uploaded. (similar to Facebook, Instagram posts, etc)
+4. There is an Upload link at the top of the page. When the upload link is clicked, a popup modal will appear. A user can drag a single image onto the modal. The image will upload to AWS S3 and your API must handle the storage of that image URL
+5. When a user uploads an image they must also give it a title
+6. The front-end must connect to AWS S3 to show images on the home page. PLEASE REVIEW "Resources" and "Tips" below for more details.
+7. There will be a Filter bar at the top of the "feed". When a user starts typing, the results of the "feed" will filter based on the posts title. For example, if a user types, "cat", any posts that includes the letters "cat" as part of the title will be displayed.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Back-end
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. User accounts & authentication
+2. Storing, fetching, and deleting of posts (a post has a title and an image)
+3. Must have error handling
+4. Must use MongoDB
+5. NOTE: Please change your database "Network Access" to, "ALLOW ACCESS FROM ANYWHERE" so Devslopes can review and test your project 👍🏼 You can set this back to private after your project has been approved if you'd like.
 
-### `npm test`
+#### Want a job? (Extra Credit)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. Make the front-end look beautiful
+2. Write unit tests for all of your endpoints
+3. Make sure the front-end UI NEVER freezes
+4. Show progress bars for uploads of images
+5. Deploy your front-end and back-end live for all to see

@@ -5,7 +5,6 @@ const PostContext = createContext();
 
 export function PostProvider({ children }) {
   const { postService } = useContext(UserContext);
-
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState(posts);
   const [loadingPosts, setLoadingPosts] = useState(false);

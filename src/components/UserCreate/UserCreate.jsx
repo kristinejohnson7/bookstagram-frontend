@@ -6,8 +6,9 @@ import Alert from "../Alert/Alert";
 import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
 import profile from "../../assets/profile.jpg";
+import { Progress } from "antd";
 
-const UserCreate = ({ closeRegister }) => {
+const UserCreate = () => {
   const { authService } = useContext(UserContext);
   const INIT_STATE = {
     photo: null,
@@ -20,9 +21,8 @@ const UserCreate = ({ closeRegister }) => {
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [percentage, setPercentage] = useState(0);
-
-  // const [uploadingImg, setUploadingImg] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [passwordError, setPasswordError] = useState(false);
 
   const onChange = ({ target: { name, value } }) => {
     setUserInfo({ ...userInfo, [name]: value });
@@ -33,6 +33,11 @@ const UserCreate = ({ closeRegister }) => {
   const createUser = (e) => {
     e.preventDefault();
     const fData = new FormData(e.target);
+
+    if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters in length.");
+    }
+
     if (!!userName && !!email && !!password) {
       setIsLoading(true);
       const options = {
@@ -87,24 +92,29 @@ const UserCreate = ({ closeRegister }) => {
       type: "text",
       name: "name",
       placeholder: "Enter name",
+      key: 1,
     },
     {
       value: `${userName}`,
       type: "text",
       name: "userName",
       placeholder: "Enter username",
+      key: 2,
     },
     {
       value: `${email}`,
       type: "email",
       name: "email",
       placeholder: "Enter email",
+      key: 3,
     },
     {
       value: `${password}`,
       type: "password",
       name: "password",
+      error: passwordError,
       placeholder: "Enter password",
+      key: 4,
     },
   ];
 
@@ -138,6 +148,7 @@ const UserCreate = ({ closeRegister }) => {
             cname="submitBtn"
             title={!isLoading ? "Create Account" : "Creating your account"}
           />
+          {percentage > 0 && <Progress percent={percentage} />}
         </form>
       </div>
     </>

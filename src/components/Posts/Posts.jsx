@@ -8,9 +8,8 @@ import { UserContext } from "../../App";
 export default function Posts() {
   const { filteredPosts, handleLikePost } = useContext(PostContext);
   const [updatePost, setUpdatePost] = useState(false);
-  const { posts, setFilteredPosts, getPosts, loadingPosts } =
-    useContext(PostContext);
-  const { authService, postService } = useContext(UserContext);
+  const { getPosts, loadingPosts } = useContext(PostContext);
+  const { postService } = useContext(UserContext);
 
   const handleLikeGrammar = (number) => {
     return number > 1 ? `${number} likes` : `${number} like`;
@@ -100,7 +99,6 @@ export default function Posts() {
                         ? "Be the first to like this post!"
                         : handleLikeGrammar(likes.length)}
                     </p>
-
                     <div>
                       {!updatePost ? (
                         <p>
@@ -134,7 +132,6 @@ export default function Posts() {
                       )}
                     </div>
                   </div>
-
                   <p className="cardDate">
                     {dayjs(createdAt).format("dddd MMM DD YYYY, h:mm a")}
                   </p>

@@ -1,4 +1,3 @@
-// import { toHaveStyle } from "@testing-library/jest-dom/dist/matchers";
 import axios from "axios";
 
 const BASE_URL = "http://localhost:5005/api/v1";
@@ -160,19 +159,11 @@ export class AuthService extends User {
 export class PostService {
   constructor(authHeader) {
     this.getAuthHeader = authHeader;
-    this.posts = [];
-    this.uploadProgressCallback = null;
-  }
-
-  setPosts(newPosts) {
-    this.posts = newPosts;
   }
 
   async findAllPosts() {
     try {
-      const response = await axios.get(URL_GET_POSTS);
-      this.posts = response.data.data;
-      return response.data.data;
+      await axios.get(URL_GET_POSTS);
     } catch (err) {
       console.error(err);
       throw err;
@@ -226,8 +217,7 @@ export class PostService {
   async deletePost(id) {
     const headers = this.getAuthHeader();
     try {
-      const response = await axios.delete(URL_GET_POSTS + id, { headers });
-      this.posts = this.posts.filter((post) => post !== response);
+      await axios.delete(URL_GET_POSTS + id, { headers });
     } catch (error) {
       console.error(error);
       throw error;

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import Modal from "../Modal/Modal";
 import { UserContext } from "../../App";
 import Button from "../Button/Button";
@@ -7,12 +7,13 @@ import "./UploadPost.css";
 import PostContext from "../../PostContext";
 import { Progress } from "antd";
 
-export default function UploadPost({ close, modal }) {
+export default function UploadPost({ close }) {
   const { postService } = useContext(UserContext);
   const { getPosts } = useContext(PostContext);
-  const [error, setError] = useState(false);
-  const [files, setFiles] = useState([]);
+  const [titleError, setTitleError] = useState(false);
+  const [file, setFile] = useState("");
   const [percentage, setPercentage] = useState(0);
+  const [uploadError, setUploadError] = useState(false);
 
   const uploadPostData = [
     {
@@ -29,46 +30,87 @@ export default function UploadPost({ close, modal }) {
     },
   ];
 
+  const checkErrorBeforeSave = (data) => {
+    let errorValue = "";
+    let isError = false;
+    Object.keys(data).forEach((val) => {
+      if (data[val].length === 0 || data[val] === null) {
+        errorValue = "Required";
+        isError = true;
+      }
+    });
+    setTitleError(errorValue);
+    return isError;
+  };
+
   const onPostUpload = (e) => {
     e.preventDefault();
     const fData = new FormData(e.target);
-    // fData.append("file", fData.get("photo"));
-    console.log(fData.get("photo"));
-    // fData.delete("photo");
-    // fData.set("photo", files[0], files[0].name);
-    fData.set("user", localStorage.getItem("userId"));
-    const options = {
-      onUploadProgress: (progressEvent) => {
-        const { loaded, total } = progressEvent;
-        let percent = Math.floor((loaded * 100) / total);
-        console.log(`${loaded}kb of ${total}kb ${percent}%`);
-        if (percent < 100) {
-          setPercentage(percent);
-        }
-      },
+    const uploadPostData = {
+      title: fData.get("title"),
     };
-    postService
-      .createPost(fData, options)
-      .then((res) => {
-        console.log(res);
-        setPercentage(100);
-        getPosts();
-        close();
-      })
-      .catch((error) => {
-        console.error("Upload post", error);
-        setError(true);
-      });
+    const errorCheck = checkErrorBeforeSave(uploadPostData);
+
+    if (!errorCheck) {
+      fData.set("user", localStorage.getItem("userId"));
+      const options = {
+        onUploadProgress: (progressEvent) => {
+          const { loaded, total } = progressEvent;
+          let percent = Math.floor((loaded * 100) / total);
+          if (percent < 100) {
+            setPercentage(percent);
+          }
+        },
+      };
+      postService
+        .createPost(fData, options)
+        .then((res) => {
+          console.log(res);
+          setPercentage(100);
+          getPosts();
+          close();
+        })
+        .catch((error) => {
+          console.error("Upload post", error);
+          setUploadError(true);
+        });
+    }
+  };
+
+  const imagePreview = (e) => {
+    setFile(URL.createObjectURL(e.target.files[0]));
   };
 
   return (
     <Modal title="Profile" isOpen={true} close={close}>
       <form id="postForm" onSubmit={onPostUpload} className="uploadPostForm">
-        <input type="file" name="photo" />
-        {percentage > 0 && <Progress percent={percentage} />}
+        <label className="custom-file-upload">
+          <i className="fa-solid fa-upload fa-lg"></i>
+          <br />
+          Click or drag image to this area to upload
+          <input
+            type="file"
+            name="photo"
+            onChange={imagePreview}
+            accept="image/*"
+            required
+          />
+        </label>
+        {file && (
+          <div className="imgPreview">
+            <i className="fa-solid fa-x fa-lg" onClick={() => setFile("")}></i>
+            <img src={file} alt="post preview" />
+          </div>
+        )}
         <div className="uploadInputs">
-          <FormBody formValues={uploadPostData} />
+          <FormBody formValues={uploadPostData} error={titleError} />
           <Button cname="submitBtn" title="Create post" />
+          {percentage > 0 && <Progress percent={percentage} />}
+          {uploadError && (
+            <p className="alert alert-danger">
+              Error uploading post, please try again.
+            </p>
+          )}
         </div>
       </form>
     </Modal>
