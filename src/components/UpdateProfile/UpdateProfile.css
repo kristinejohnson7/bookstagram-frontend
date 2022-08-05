@@ -1,0 +1,21 @@
+.profile {
+  margin-bottom: 17px;
+}
+
+.profileUpdateAvatar {
+  width: 90px;
+  height: 90px;
+  margin: 15px auto;
+}
+
+.profileUpdateAvatar img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(255, 255, 255,.07), 
+  0 2px 4px rgba(255, 255, 255, .07), 
+  0 4px 8px rgba(255, 255, 255,0.07), 
+  0 8px 16px rgba(255, 255, 255,0.07),
+  0 16px 32px rgba(255, 255, 255,0.07), 
+  0 32px 64px rgba(255, 255, 255,0.07);
+}

@@ -5,7 +5,7 @@ import { UserContext } from "../../App";
 import Alert from "../Alert/Alert";
 import Button from "../Button/Button";
 import FormBody from "../FormBody/FormBody";
-import profile from "../../assets/profile.jpg";
+import profile from "../../assets/defaultAvatar.png";
 import { Progress } from "antd";
 
 const UserCreate = () => {
@@ -44,7 +44,6 @@ const UserCreate = () => {
         onUploadProgress: (progressEvent) => {
           const { loaded, total } = progressEvent;
           let percent = Math.floor((loaded * 100) / total);
-          console.log(`${loaded}kb of ${total}kb ${percent}%`);
           if (percent < 100) {
             setPercentage(percent);
           }
@@ -78,7 +77,6 @@ const UserCreate = () => {
       return alert("Max file size is 1mb");
     } else {
       setUserInfo({ ...userInfo, photo: file });
-      console.log("file name", file);
       setImagePreview(URL.createObjectURL(file));
     }
   };

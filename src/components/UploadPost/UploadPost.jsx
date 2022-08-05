@@ -65,7 +65,6 @@ export default function UploadPost({ close }) {
       postService
         .createPost(fData, options)
         .then((res) => {
-          console.log(res);
           setPercentage(100);
           getPosts();
           close();
@@ -78,7 +77,12 @@ export default function UploadPost({ close }) {
   };
 
   const imagePreview = (e) => {
-    setFile(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    if (file.size >= 1048576) {
+      return alert("Max file size is 1mb");
+    } else {
+      setFile(URL.createObjectURL(e.target.files[0]));
+    }
   };
 
   return (

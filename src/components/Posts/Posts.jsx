@@ -4,8 +4,9 @@ import "./Posts.css";
 import PostContext from "../../PostContext";
 import dayjs from "dayjs";
 import { UserContext } from "../../App";
+import profile from "../../assets/defaultAvatar.png";
 
-export default function Posts() {
+export default function Posts({ setIsFetching, isFetching }) {
   const { filteredPosts, handleLikePost } = useContext(PostContext);
   const [updatePost, setUpdatePost] = useState(false);
   const { getPosts, loadingPosts } = useContext(PostContext);
@@ -59,11 +60,15 @@ export default function Posts() {
                 title,
                 userName,
                 likes,
+                avatar,
                 user,
               } = post;
               return (
                 <div className="postCard" key={_id}>
-                  <p className="cardName">{userName}</p>
+                  <div className="cardNameContainer">
+                    <img src={avatar ?? profile} alt="user avatar" />
+                    <p className="cardName">{userName ?? "Inactive User"}</p>
+                  </div>
                   <div className="postCardImg">
                     <img src={photo} alt="post" />
                   </div>

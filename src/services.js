@@ -13,6 +13,8 @@ class User {
     this.id = "";
     this.name = "";
     this.email = "";
+    this.avatar = "";
+    this.userName = "";
     this.isLoggedIn = false;
   }
 
@@ -24,10 +26,12 @@ class User {
   }
 
   setUserData(userData) {
-    const { _id, name, email } = userData;
+    const { _id, name, email, avatar, userName } = userData;
     this.id = _id;
     this.name = name;
     this.email = email;
+    this.avatar = avatar;
+    this.userName = userName;
     localStorage.setItem("userId", this.id);
   }
 }
@@ -47,10 +51,12 @@ export class AuthService extends User {
   logoutUser() {
     this.id = "";
     this.name = "";
+    this.userName = "";
     this.email = "";
     this.isLoggedIn = false;
     this.authToken = "";
     this.bearerHeader = {};
+    this.avatar = "";
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
   }
@@ -74,13 +80,18 @@ export class AuthService extends User {
   getBearerHeader = () => this.bearerHeader;
 
   async createUser(body, options) {
-    const headers = this.getBearerHeader();
     try {
       const response = await axios.post(URL_USER, body, {
         headers,
         ...options,
       });
-      this.setUserData(response.data);
+      this.setUserData({
+        _id: response.data.data._id,
+        name: response.data.data.name,
+        avatar: response.data.data.photo,
+        email: response.data.data.email,
+        userName: response.data.data.userName,
+      });
     } catch (error) {
       console.error(error);
       throw error;
@@ -109,6 +120,8 @@ export class AuthService extends User {
         name: response.data.data.name,
         email: response.data.data.email,
         _id: response.data.data._id,
+        avatar: response.data.data.photo,
+        userName: response.data.data.userName,
       });
     } catch (err) {
       console.error(err);
@@ -129,15 +142,20 @@ export class AuthService extends User {
     }
   }
 
-  async updateUser({ name, email }) {
+  async updateUser(body, options) {
     const headers = this.getBearerHeader();
-    const body = {
-      name: name,
-      email: email,
-    };
     try {
-      const response = await axios.put(URL_USER + this.id, body, { headers });
-      this.setUserData(response);
+      const response = await axios.put(URL_USER + this.id, body, {
+        headers,
+        ...options,
+      });
+      this.setUserData({
+        name: response.data.data.name,
+        email: response.data.data.email,
+        _id: response.data.data._id,
+        avatar: response.data.data.photo,
+        userName: response.data.data.userName,
+      });
       return this.user;
     } catch (error) {
       console.error(error);
@@ -163,7 +181,8 @@ export class PostService {
 
   async findAllPosts() {
     try {
-      await axios.get(URL_GET_POSTS);
+      const response = await axios.get(URL_GET_POSTS);
+      return response.data;
     } catch (err) {
       console.error(err);
       throw err;
