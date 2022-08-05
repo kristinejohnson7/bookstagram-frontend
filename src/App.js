@@ -16,7 +16,10 @@ import Explore from "./components/Explore/Explore";
 import PasswordReset from "./components/PasswordReset/PasswordReset";
 
 const authService = new AuthService();
-const postService = new PostService(authService.getBearerHeader);
+const postService = new PostService(
+  authService.getBearerHeader,
+  authService.id
+);
 export const UserContext = createContext();
 const AuthProvider = ({ children }) => {
   const context = {

@@ -1,11 +1,19 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../../assets/logo.png";
 import "./Nav.css";
 import PostContext from "../../PostContext";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../App";
+import profile from "../../assets/defaultAvatar.png";
 
-export default function Nav({ profileModal, uploadModal }) {
+export default function Nav({
+  profileModal,
+  uploadModal,
+  setIsFetching,
+  isFetching,
+}) {
   const { posts, setFilteredPosts } = useContext(PostContext);
+  const { authService } = useContext(UserContext);
 
   const handleFilter = (event) => {
     const searchWord = event.target.value;
@@ -38,7 +46,7 @@ export default function Nav({ profileModal, uploadModal }) {
             <i className="fa-solid fa-circle-plus fa-lg"></i>
           </div>
           <div className="userIcon" onClick={profileModal}>
-            <i className="fa-solid fa-user fa-lg"></i>
+            <img src={authService.avatar ?? profile} alt="user avatar" />
           </div>
         </div>
       </div>
