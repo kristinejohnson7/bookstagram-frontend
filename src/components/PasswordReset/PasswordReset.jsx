@@ -13,9 +13,13 @@ export default function PasswordReset() {
     e.preventDefault();
     const fData = new FormData(e.target);
     axios
-      .put("http://localhost:5005/api/v1/auth/resetpassword/" + resetToken, {
-        password: fData.get("password"),
-      })
+      .put(
+        "https://bookstagram7.cyclic.app/api/v1/auth/resetpassword/" +
+          resetToken,
+        {
+          password: fData.get("password"),
+        }
+      )
       .then(navigate("/"));
   };
 
