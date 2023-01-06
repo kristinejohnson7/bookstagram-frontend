@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const BASE_URL = "https://bookstagram7.cyclic.app/api/v1";
-const BASE_URL = "http://localhost:5005/api/v1";
+const BASE_URL = "https://bookstagram7.cyclic.app/api/v1";
+// const BASE_URL = "http://localhost:5005/api/v1";
 const URL_ACCOUNT = `${BASE_URL}/auth/me`;
 const URL_LOGIN = `${BASE_URL}/auth/login`;
 const URL_USER = `${BASE_URL}/users/`;
