@@ -19,6 +19,7 @@ const UserCreate = () => {
   };
   const [userInfo, setUserInfo] = useState(INIT_STATE);
   const [error, setError] = useState(false);
+  const [photoError, setPhotoError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [percentage, setPercentage] = useState(0);
   const [imagePreview, setImagePreview] = useState(null);
@@ -32,7 +33,10 @@ const UserCreate = () => {
 
   const createUser = (e) => {
     e.preventDefault();
-    const fData = new FormData(e.target);
+    let fData = new FormData(e.target);
+    if (!fData.photo) {
+      setPhotoError(true);
+    }
 
     if (password.length < 6) {
       setPasswordError("Password must be at least 6 characters in length.");
@@ -120,6 +124,10 @@ const UserCreate = () => {
     <>
       <div className="center-display">
         {error ? <Alert message={errorMsg} type="alert-danger" /> : null}
+        {photoError ? (
+          <Alert message="Please upload a photo." type="alert-danger" />
+        ) : null}
+        {}
         {isLoading ? <div>Loading...</div> : null}
         <h3 className="title">Create an account</h3>
         <form onSubmit={createUser} className="form">
